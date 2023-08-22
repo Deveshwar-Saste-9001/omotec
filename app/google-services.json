@@ -1,0 +1,47 @@
+{
+  "project_info": {
+    "project_number": "428057729401",
+    "project_id": "omotec-attendance",
+    "storage_bucket": "omotec-attendance.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:428057729401:android:df158e5e8929db586b77a8",
+        "android_client_info": {
+          "package_name": "com.example.attendancesystem_omotec"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "428057729401-46bls7946rou2uc7oqff2vpktar50cuk.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.attendancesystem_omotec",
+            "certificate_hash": "1f23bdb8bcbee064c718732510db855ed0a9abe1"
+          }
+        },
+        {
+          "client_id": "428057729401-pbilf5av715mbko2f06tauthkssh9kri.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAMppELFRPMnOTHS3JHGNqnfs2o2Vu4cXM"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "428057729401-pbilf5av715mbko2f06tauthkssh9kri.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
