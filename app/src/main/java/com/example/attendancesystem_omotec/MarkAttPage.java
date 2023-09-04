@@ -119,7 +119,7 @@ public class MarkAttPage extends AppCompatActivity {
         student_recyclerView = findViewById(R.id.student_recyclerView);
         submit_btn = findViewById(R.id.submit_att_btn);
         listIndex = getIntent().getIntExtra("index", 0);
-//
+
 
 
     }
@@ -164,46 +164,10 @@ public class MarkAttPage extends AppCompatActivity {
 
 
         });
-        String iconUrl = schoolModelList.get(listIndex).getSchool_Logo();
-        if (!iconUrl.equals("null")) {
-// FirebaseStorage instance
-            FirebaseStorage storage = FirebaseStorage.getInstance();
-
-// Create a storage reference from the Firebase Storage URL
-            StorageReference storageRef = storage.getReferenceFromUrl(iconUrl);
-
-// Create a local file to store the downloaded image
-            File localFile = new File(getFilesDir(), school+"image.jpg");
-
-            // Download the image and save it to the local file
-            storageRef.getFile(localFile).addOnSuccessListener(taskSnapshot -> {
-                // Image downloaded successfully
-                // Now load the image into the ImageView using Glide
-                loadLocalImageIntoImageView(localFile);
-            }).addOnFailureListener(exception -> {
-                // Handle any errors during the download
-                exception.printStackTrace();
-            });
-
-          //  Glide.with(MarkAttPage.this).load(iconUrl).apply(new RequestOptions().placeholder(R.drawable.baseline_school_24)).into(schoolLogo);
-        } else {
-            Glide.with(MarkAttPage.this).load(R.drawable.baseline_school_24).apply(new RequestOptions().placeholder(R.drawable.baseline_school_24)).into(schoolLogo);
-        }
 
 
     }
 
-    private void loadLocalImageIntoImageView(File localFile) {
-        // Get the ImageView instance
-        ImageView imageView = findViewById(R.id.imageView);
-
-        // Load the image into the ImageView using Glide
-        Glide.with(this)
-                .load(localFile)
-                .apply(RequestOptions.placeholderOf(R.drawable.baseline_school_24)) // Placeholder image while loading (optional)
-                .apply(RequestOptions.errorOf(R.drawable.baseline_school_24)) // Image to display if load fails (optional)
-                .into(schoolLogo);
-    }
 
     private void loadStudents(boolean isLoaded) {
         RootRef = FirebaseDatabase.getInstance().getReference();
@@ -243,7 +207,9 @@ public class MarkAttPage extends AppCompatActivity {
                                 if (task1.isSuccessful()) {
                                     for (QueryDocumentSnapshot documentSnapshot1 : task1.getResult()) {
                                         student_list.add(new List_view_model(Integer.parseInt(documentSnapshot1.get("roll_no").toString()), documentSnapshot1.get("name").toString(), documentSnapshot1.get("section").toString(), (Boolean) documentSnapshot1.get("isAbsent")));
+                                        if(!documentSnapshot1.getString("section").equals("")){
                                         classList.add(documentSnapshot1.getString("section"));
+                                        }
                                     }
                                     int i = 0;
                                     classes = new String[classList.size()];

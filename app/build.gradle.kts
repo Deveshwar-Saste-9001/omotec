@@ -51,6 +51,7 @@ dependencies {
     implementation("org.apache.poi:poi-ooxml:5.2.3")
 
     implementation("com.github.bumptech.glide:glide:4.8.0")
+    implementation("com.google.firebase:firebase-inappmessaging:20.3.5")
     annotationProcessor ("com.github.bumptech.glide:compiler:4.8.0")
     implementation("com.google.firebase:firebase-storage:20.2.1")
     implementation("com.squareup.picasso:picasso:2.71828")

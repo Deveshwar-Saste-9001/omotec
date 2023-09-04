@@ -32,7 +32,7 @@ public class DatabaseQueries {
                         if (task.isSuccessful()) {
                             schoolModelList.clear();
                             for (QueryDocumentSnapshot documentSnapshot : task.getResult()) {
-                                schoolModelList.add(new School_Model(documentSnapshot.get("school_id").toString(), documentSnapshot.get("Name").toString(), documentSnapshot.get("logo").toString(), documentSnapshot.get("location").toString()));
+                                schoolModelList.add(new School_Model(null, documentSnapshot.get("Name").toString(), documentSnapshot.get("logo").toString(), documentSnapshot.get("location").toString()));
                             }
 
                         } else {
