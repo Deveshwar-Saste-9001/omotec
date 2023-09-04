@@ -12,8 +12,11 @@ import android.os.Bundle;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.Spinner;
 import android.widget.Toast;
 
 import com.google.android.gms.tasks.OnCompleteListener;
@@ -37,13 +40,18 @@ import java.util.Map;
 
 public class signUpActivity extends AppCompatActivity {
 
-
     private ProgressDialog LodingBar;
     private FirebaseAuth firebaseAuth;
     private FirebaseFirestore firebaseFirestore;
-    private EditText emailValue, nameValue, mobileValue;
+    private EditText emailValue, nameValue;
+    private Spinner selectLocationEditView;
+    private TextInputEditText mobileValue;
     private TextInputEditText passwordValue;
     private DatabaseReference RootRef;
+    private String location="";
+    private String[] locations={
+            "pune","mumbai"
+    };
     public static boolean disableRegCloseBtn = false;
     private Button signup, backbtn;
 
@@ -60,17 +68,40 @@ public class signUpActivity extends AppCompatActivity {
         passwordValue = findViewById(R.id.addpassword);
         nameValue = findViewById(R.id.addname);
         mobileValue = findViewById(R.id.addmobile);
+        selectLocationEditView=findViewById(R.id.selectLocationreg);
         LodingBar = new ProgressDialog(this);
         signup = findViewById(R.id.signupBtn);
         backbtn = findViewById(R.id.backBtn);
         firebaseAuth = FirebaseAuth.getInstance();
         //auth = FirebaseAuth.getInstance();
         firebaseFirestore = FirebaseFirestore.getInstance();
+        backbtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(signUpActivity.this, MainMenuActivity.class);
+                startActivity(intent);
+                finish();
+            }
+        });
 
         signup.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 CreateAccount();
+            }
+        });
+        ArrayAdapter<String> adapter = new ArrayAdapter<>(signUpActivity.this, R.layout.section_list_items, locations);
+        adapter.setDropDownViewResource(R.layout.section_list_items);
+        selectLocationEditView.setAdapter(adapter);
+        selectLocationEditView.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                location=selectLocationEditView.getSelectedItem().toString();
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+
             }
         });
 
@@ -111,12 +142,12 @@ public class signUpActivity extends AppCompatActivity {
             LodingBar.setCanceledOnTouchOutside(false);
             LodingBar.show();
 
-            ValidatePhoneNumber(name, mobile, password, email);
+            ValidatePhoneNumber(name, mobile, password, email,location);
         }
 
     }
 
-    private void ValidatePhoneNumber(final String Name, final String Mobile, final String Password, final String Email) {
+    private void ValidatePhoneNumber(final String Name, final String Mobile, final String Password, final String Email,String loc) {
 
         RootRef = FirebaseDatabase.getInstance().getReference();
 
@@ -128,17 +159,18 @@ public class signUpActivity extends AppCompatActivity {
                     userdataMap.put("Mobile", Mobile);
                     userdataMap.put("Name", Name);
                     userdataMap.put("Email", Email);
+                    userdataMap.put("Location", loc);
                     userdataMap.put("Password", Password);
+                    userdataMap.put("Status", "pending");
 
-                    CheckEmailAndPassword(Mobile, Name, Email, Password);
+                    CheckEmailAndPassword(Mobile, Name, Email, Password,loc);
 
 
                 } else {
                     Toast.makeText(signUpActivity.this, "this mobile number" + Mobile + "alredy exist", Toast.LENGTH_SHORT).show();
                     LodingBar.dismiss();
                     Toast.makeText(signUpActivity.this, "Please try again using another number", Toast.LENGTH_SHORT).show();
-                    Intent intent = new Intent(signUpActivity.this, HomeActivity.class);
-                    startActivity(intent);
+                    mobileValue.setText("");
                 }
             }
 
@@ -151,7 +183,7 @@ public class signUpActivity extends AppCompatActivity {
 
     }
 
-    private void CheckEmailAndPassword(final String Mobile, final String Name, final String Email, final String Password) {
+    private void CheckEmailAndPassword(final String Mobile, final String Name, final String Email, final String Password,String loc) {
         String emailPattern = "[a-zA-Z0-9._-]+@[a-z]+.[a-z]+";
         if (emailValue.getText().toString().matches(emailPattern)) {
             firebaseAuth.createUserWithEmailAndPassword(emailValue.getText().toString(), passwordValue.getText().toString())
@@ -164,8 +196,10 @@ public class signUpActivity extends AppCompatActivity {
                                 userdataMap.put("Name", Name);
                                 userdataMap.put("Email", Email);
                                 userdataMap.put("profile", "");
+                                userdataMap.put("Location", loc);
                                 userdataMap.put("id", firebaseAuth.getUid());
                                 userdataMap.put("Password", Password);
+                                userdataMap.put("Status", "pending");
 
                                 firebaseFirestore.collection("USERS").document(firebaseAuth.getUid())
                                         .set(userdataMap)
@@ -203,10 +237,12 @@ public class signUpActivity extends AppCompatActivity {
                                                                                                     if (disableRegCloseBtn) {
                                                                                                         Toast.makeText(signUpActivity.this, "Congratulation your account created", Toast.LENGTH_SHORT).show();
                                                                                                         disableRegCloseBtn = false;
+                                                                                                        Intent intent = new Intent(signUpActivity.this, MainMenuActivity.class);
+                                                                                                        startActivity(intent);
                                                                                                         finish();
                                                                                                     } else {
                                                                                                         Toast.makeText(signUpActivity.this, "Congratulation your account created", Toast.LENGTH_SHORT).show();
-                                                                                                        Intent intent = new Intent(signUpActivity.this, HomeActivity.class);
+                                                                                                        Intent intent = new Intent(signUpActivity.this, MainMenuActivity.class);
                                                                                                         startActivity(intent);
                                                                                                         finish();
                                                                                                         disableRegCloseBtn = false;
@@ -270,7 +306,7 @@ public class signUpActivity extends AppCompatActivity {
         emailValue.setText("");
         passwordValue.setText("");
 
-        Intent homeIntent = new Intent(signUpActivity.this, MainActivity.class);
+        Intent homeIntent = new Intent(signUpActivity.this, MainMenuActivity.class);
         startActivity(homeIntent);
         finish();
     }

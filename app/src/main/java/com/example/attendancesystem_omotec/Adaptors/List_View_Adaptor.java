@@ -25,9 +25,11 @@ import java.util.List;
 
 public class List_View_Adaptor extends RecyclerView.Adapter<List_View_Adaptor.ListViewHolder> {
     public List<List_view_model> student_List;
+    private boolean isEditable;
 
-    public List_View_Adaptor(List<List_view_model> student_List) {
+    public List_View_Adaptor(List<List_view_model> student_List, boolean isEditable) {
         this.student_List = student_List;
+        this.isEditable=isEditable;
     }
 
     @NonNull
@@ -69,18 +71,22 @@ public class List_View_Adaptor extends RecyclerView.Adapter<List_View_Adaptor.Li
             student_name = itemView.findViewById(R.id.student_name_list_view);
             student_class = itemView.findViewById(R.id.section_list_view);
             student_absent = itemView.findViewById(R.id.student_absent_list_view);
-            itemView.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-                    item_clicked(view, getAdapterPosition(), student_name.getText().toString(), student_class.getText().toString(), student_absent.isChecked());
-                }
-            });
-            student_absent.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-                    item_clicked(view, getAdapterPosition(), student_name.getText().toString(), student_class.getText().toString(), student_absent.isChecked());
-                }
-            });
+            if(isEditable){
+                itemView.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        item_clicked(view, getAdapterPosition(), student_name.getText().toString(), student_class.getText().toString(), student_absent.isChecked());
+                    }
+                });
+                student_absent.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        item_clicked(view, getAdapterPosition(), student_name.getText().toString(), student_class.getText().toString(), student_absent.isChecked());
+                    }
+                });
+            }
+
+
 
         }
 

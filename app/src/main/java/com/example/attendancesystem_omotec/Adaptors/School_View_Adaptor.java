@@ -15,6 +15,7 @@ import com.bumptech.glide.request.RequestOptions;
 import com.example.attendancesystem_omotec.MarkAttPage;
 import com.example.attendancesystem_omotec.Models.School_Model;
 import com.example.attendancesystem_omotec.R;
+import com.example.attendancesystem_omotec.SchoolMenuActivity;
 import com.example.attendancesystem_omotec.addStudentList;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
@@ -69,16 +70,12 @@ public class School_View_Adaptor extends RecyclerView.Adapter<School_View_Adapto
             itemView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    Intent intent=new Intent(itemView.getContext(), addStudentList.class);
+                    Intent intent=new Intent(itemView.getContext(), SchoolMenuActivity.class);
                     intent.putExtra("school",schoolNameTextView.getText());
                     itemView.getContext().startActivity(intent);
                 }
             });
-
-
         }
-
-
         public void setData(String SchoolName) {
             schoolNameTextView.setText(SchoolName);
 

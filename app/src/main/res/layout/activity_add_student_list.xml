@@ -9,6 +9,24 @@
     android:background="@drawable/main_app_background"
     tools:context=".addStudentList">
 
+    <com.google.android.material.appbar.AppBarLayout
+        android:id="@+id/appbar"
+        android:layout_width="match_parent"
+        android:layout_height="60dp"
+        android:background="@drawable/main_app_background"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+    <androidx.appcompat.widget.Toolbar
+        android:id="@+id/att_toolbar"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+
+        />
+    </com.google.android.material.appbar.AppBarLayout>
+
+
     <TextView
         android:id="@+id/selectFile"
         android:layout_width="0dp"

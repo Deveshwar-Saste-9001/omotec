@@ -78,7 +78,7 @@ public class MarkAttPage extends AppCompatActivity {
 
     private TextView schoolLogoName;
     private DatabaseReference RootRef;
-    private int listIndex = -1;
+   // private int listIndex = -1;
 
     public static FirebaseFirestore firebaseFirestore = FirebaseFirestore.getInstance();
     public static String school = "";
@@ -89,7 +89,6 @@ public class MarkAttPage extends AppCompatActivity {
     private List<List_view_model> student_list;
     private List_View_Adaptor student_adaptor;
     private RecyclerView student_recyclerView;
-    private Button submit_btn;
     private ProgressDialog LodingBar;
     String day;
     private ImageView schoolLogo;
@@ -110,15 +109,15 @@ public class MarkAttPage extends AppCompatActivity {
         autoCompleteTextView = findViewById(R.id.autoCompleteTextView);
         Toolbar toolbar = (Toolbar) findViewById(R.id.att_toolbar);
         setSupportActionBar(toolbar);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        getSupportActionBar().setTitle(school);
         student_list = new ArrayList<>();
         schoolLogo = findViewById(R.id.schoollogo);
         LodingBar = new ProgressDialog(this);
         schoolLogoName = findViewById(R.id.schoolNameATT);
         schoolLogoName.setText(school);
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         student_recyclerView = findViewById(R.id.student_recyclerView);
-        submit_btn = findViewById(R.id.submit_att_btn);
-        listIndex = getIntent().getIntExtra("index", 0);
+       // listIndex = getIntent().getIntExtra("index", 0);
 
 
 
@@ -190,16 +189,21 @@ public class MarkAttPage extends AppCompatActivity {
                             if (isLoaded) {
                                 final HashMap<String, Object> userdataMap = new HashMap<>();
                                 userdataMap.put("name", documentSnapshot.get("name").toString());
+                                if(!documentSnapshot.get("roll_no").equals("")){
                                 userdataMap.put("roll_no", Integer.parseInt(documentSnapshot.get("roll_no").toString()));
+                                }else{
+                                    userdataMap.put("roll_no", documentSnapshot.get("roll_no").toString());
+                                }
                                 userdataMap.put("section", documentSnapshot.get("section").toString());
                                 userdataMap.put("isAbsent", false);
                                 HashMap<String, Object> updates = new HashMap<String, Object>();
                                 updates.put("isLoaded", true);
                                 RootRef.child("Schools").child(school).child(today.toString()).updateChildren(updates);
+                                final HashMap<String, Object> dateId = new HashMap<>();
+                                dateId.put("id", today.toString());
+                                firebaseFirestore.collection("Schools").document(school).collection("ATTENDANCES").document(today.toString()).set(dateId);
                                 firebaseFirestore.collection("Schools").document(school).collection("ATTENDANCES").document(today.toString()).collection("STUDENTS").document(documentSnapshot.get("name").toString()).set(userdataMap);
                             }
-
-
                         }
                         firebaseFirestore.collection("Schools").document(school).collection("ATTENDANCES").document(today.toString()).collection("STUDENTS").get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
                             @Override
@@ -221,7 +225,7 @@ public class MarkAttPage extends AppCompatActivity {
                                     adapter.setDropDownViewResource(R.layout.section_list_items);
                                     autoCompleteTextView.setAdapter(adapter);
 
-                                    student_adaptor = new List_View_Adaptor(student_list);
+                                    student_adaptor = new List_View_Adaptor(student_list,true);
                                     student_recyclerView.setAdapter(student_adaptor);
                                     student_recyclerView.setLayoutManager(new LinearLayoutManager(MarkAttPage.this));
 
@@ -242,7 +246,6 @@ public class MarkAttPage extends AppCompatActivity {
                         LodingBar.dismiss();
                     }
 
-
                 }
             });
         } else {
@@ -250,7 +253,7 @@ public class MarkAttPage extends AppCompatActivity {
             adapter.setDropDownViewResource(R.layout.section_list_items);
             autoCompleteTextView.setAdapter(adapter);
 
-            student_adaptor = new List_View_Adaptor(student_list);
+            student_adaptor = new List_View_Adaptor(student_list,true);
             student_recyclerView.setAdapter(student_adaptor);
             student_recyclerView.setLayoutManager(new LinearLayoutManager(MarkAttPage.this));
 
@@ -264,7 +267,7 @@ public class MarkAttPage extends AppCompatActivity {
 
 
     void list_filter() {
-        String List_Fil = autoCompleteTextView.getSelectedItem().toString();
+        String List_Fil = (String) autoCompleteTextView.getSelectedItem();
         List<List_view_model> new_studentList = new ArrayList<>();
         for (List_view_model list_item : student_list) {
             if (list_item.getStudent_Section().equals(List_Fil)) {
@@ -273,7 +276,7 @@ public class MarkAttPage extends AppCompatActivity {
 
             }
         }
-        student_adaptor = new List_View_Adaptor(new_studentList);
+        student_adaptor = new List_View_Adaptor(new_studentList,true);
         student_recyclerView.setAdapter(student_adaptor);
         student_adaptor.notifyDataSetChanged();
 
