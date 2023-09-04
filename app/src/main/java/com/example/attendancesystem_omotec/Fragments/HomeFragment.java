@@ -13,8 +13,10 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 
+import com.example.attendancesystem_omotec.Adaptors.DailyScheduleAdaptor;
 import com.example.attendancesystem_omotec.Adaptors.SliderAdapter;
 import com.example.attendancesystem_omotec.DatabaseQueries;
+import com.example.attendancesystem_omotec.Models.DailyScheduleModel;
 import com.example.attendancesystem_omotec.R;
 import com.smarteist.autoimageslider.IndicatorView.animation.type.IndicatorAnimationType;
 import com.smarteist.autoimageslider.SliderAnimations;
@@ -33,7 +35,10 @@ public class HomeFragment extends Fragment {
         // Required empty public constructor
     }
 
-    private RecyclerView homePageRecyclerView;
+    private RecyclerView dailyScheduleRecyclerView;
+    private List<DailyScheduleModel> dailyScheduleModelList=new ArrayList<>();
+    private DailyScheduleAdaptor dailyScheduleAdaptor;
+
 
     private List<Integer> sliderbannerlist = new ArrayList<>();
     private SliderAdapter sliderAdapter;
@@ -46,7 +51,7 @@ public class HomeFragment extends Fragment {
 
         View view = inflater.inflate(R.layout.fragment_home, container, false);
 
-        homePageRecyclerView = view.findViewById(R.id.categoryRecyclerView);
+        dailyScheduleRecyclerView=view.findViewById(R.id.dailyScheduleRecyclerView);
         bannerSliderView = view.findViewById(R.id.Banner_slider_slideview);
 
         sliderbannerlist.add(R.mipmap.slide1);
@@ -64,14 +69,33 @@ public class HomeFragment extends Fragment {
         bannerSliderView.startAutoCycle();
 
 
+        dailyScheduleModelList.add(new DailyScheduleModel("ABC", "deveshwar" , "harshal"));
+        dailyScheduleModelList.add(new DailyScheduleModel("ABC", "deveshwar" , "harshal"));
+        dailyScheduleModelList.add(new DailyScheduleModel("ABC", "deveshwar" , "harshal"));
+        dailyScheduleModelList.add(new DailyScheduleModel("ABC", "deveshwar" , "harshal"));
+        dailyScheduleModelList.add(new DailyScheduleModel("ABC", "deveshwar" , "harshal"));
+        dailyScheduleModelList.add(new DailyScheduleModel("ABC", "deveshwar" , "harshal"));
+        dailyScheduleModelList.add(new DailyScheduleModel("ABC", "deveshwar" , "harshal"));
+        dailyScheduleModelList.add(new DailyScheduleModel("ABC", "deveshwar" , "harshal"));
+        dailyScheduleModelList.add(new DailyScheduleModel("ABC", "deveshwar" , "harshal"));
+
+        LinearLayoutManager LayoutManager = new LinearLayoutManager(getContext());
+        LayoutManager.setOrientation(LinearLayoutManager.VERTICAL);
+        dailyScheduleRecyclerView.setLayoutManager(LayoutManager);
+
+        dailyScheduleAdaptor=new DailyScheduleAdaptor(dailyScheduleModelList);
+        dailyScheduleRecyclerView.setAdapter(dailyScheduleAdaptor);
+        dailyScheduleAdaptor.notifyDataSetChanged();
+
+
+
+
         return view;
     }
 
     @Override
     public void onStart() {
         super.onStart();
-        if(DatabaseQueries.schoolModelList.size()==0){
-            loadSchools();
-        }
+
     }
 }

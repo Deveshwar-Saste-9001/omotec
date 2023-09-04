@@ -48,7 +48,7 @@ import java.util.Set;
 public class ViewPresentStudentActivity extends AppCompatActivity {
     public static String dateTitle = "";
 
-    private TextView schoolLogoName;
+    private TextView totalStudent,absentStudent;
     private DatabaseReference RootRef;
     // private int listIndex = -1;
 
@@ -76,6 +76,8 @@ public class ViewPresentStudentActivity extends AppCompatActivity {
         autoCompleteTextView = findViewById(R.id.autoCompleteTextView);
         school = getIntent().getStringExtra("school");
         dateTitle = getIntent().getStringExtra("date");
+        totalStudent=findViewById(R.id.totalCount);
+        absentStudent=findViewById(R.id.AbsentCount);
         date = findViewById(R.id.date);
         Toolbar toolbar = (Toolbar) findViewById(R.id.att_toolbar);
         setSupportActionBar(toolbar);
@@ -182,18 +184,24 @@ public class ViewPresentStudentActivity extends AppCompatActivity {
 
     void list_filter() {
         String List_Fil = (String) autoCompleteTextView.getSelectedItem();
+        int count=0;
         List<List_view_model> new_studentList = new ArrayList<>();
         for (List_view_model list_item : student_list) {
             if (list_item.getStudent_Section().equals(List_Fil)) {
 
                 new_studentList.add(list_item);
+                if (list_item.isStudent_Absent()) {
+count++;
+                }
 
             }
         }
+
         student_adaptor = new List_View_Adaptor(new_studentList, false);
         student_recyclerView.setAdapter(student_adaptor);
         student_adaptor.notifyDataSetChanged();
-
+        totalStudent.setText("Total: - "+new_studentList.size());
+        absentStudent.setText("Absent: - "+count);
     }
 
     @Override

@@ -19,6 +19,7 @@ import android.view.ViewGroup;
 import android.widget.Button;
 
 import com.example.attendancesystem_omotec.AddSchoolActivity;
+import com.example.attendancesystem_omotec.DatabaseQueries;
 import com.example.attendancesystem_omotec.R;
 
 /**
@@ -78,7 +79,7 @@ public class SchoolFragment extends Fragment {
 
         loadingDialog.show();
         if (schoolModelList.size() == 0) {
-            loadSchools();
+            loadSchools(DatabaseQueries.location);
             schoolAdaptor = new School_View_Adaptor(schoolModelList);
             school_RecyclerView.setAdapter(schoolAdaptor);
             school_RecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));

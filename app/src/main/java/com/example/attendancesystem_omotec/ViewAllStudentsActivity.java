@@ -108,6 +108,7 @@ public class ViewAllStudentsActivity extends AppCompatActivity {
             @Override
             public void onComplete(@NonNull Task<QuerySnapshot> task) {
                 if (task.isSuccessful()) {
+                    classList.clear();
 
 
                     //DocumentReference docRef =firebaseFirestore.collection("Schools").document(school).collection("ATTENDANCES").document(today.toString());
@@ -127,6 +128,7 @@ public class ViewAllStudentsActivity extends AppCompatActivity {
                             ArrayAdapter<String> adapter = new ArrayAdapter<>(ViewAllStudentsActivity.this, R.layout.section_list_items, classes);
                             adapter.setDropDownViewResource(R.layout.section_list_items);
                             autoCompleteTextView.setAdapter(adapter);
+                            adapter.notifyDataSetChanged();
 
                             student_adaptor = new AllStudentAdaptor(student_list);
                             studentRecyclerView.setAdapter(student_adaptor);

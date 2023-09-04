@@ -16,6 +16,7 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import com.example.attendancesystem_omotec.Adaptors.School_Adaptor;
+import com.example.attendancesystem_omotec.DatabaseQueries;
 import com.example.attendancesystem_omotec.R;
 import com.google.firebase.firestore.FirebaseFirestore;
 
@@ -59,13 +60,14 @@ public class AttendanceFragment extends Fragment {
         super.onStart();
         loadingDialog.show();
         if (schoolModelList.size() == 0) {
-            loadSchools();
+            loadSchools(DatabaseQueries.location);
 
 
             schoolAdaptor = new School_Adaptor(schoolModelList);
             school_RecyclerView.setAdapter(schoolAdaptor);
             school_RecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
             schoolAdaptor.notifyDataSetChanged();
+            loadingDialog.dismiss();
 
         } else {
             schoolAdaptor = new School_Adaptor(schoolModelList);

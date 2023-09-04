@@ -1,8 +1,10 @@
 package com.example.attendancesystem_omotec;
 
 import static com.example.attendancesystem_omotec.DatabaseQueries.loadSchools;
+import static com.example.attendancesystem_omotec.DatabaseQueries.location;
 import static com.example.attendancesystem_omotec.DatabaseQueries.schoolModelList;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.ActionBarDrawerToggle;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
@@ -14,25 +16,50 @@ import androidx.fragment.app.FragmentTransaction;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
+import android.widget.TextView;
+import android.widget.Toast;
 
 import com.example.attendancesystem_omotec.Fragments.ContactUsFragment;
 import com.example.attendancesystem_omotec.Fragments.HomeFragment;
 import com.example.attendancesystem_omotec.Fragments.AttendanceFragment;
 import com.example.attendancesystem_omotec.Fragments.SchoolFragment;
+import com.example.attendancesystem_omotec.Models.Users;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
 import com.google.android.material.navigation.NavigationView;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
+import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.FirebaseFirestore;
 
 import java.util.Objects;
+
+import de.hdodenhof.circleimageview.CircleImageView;
 
 public class HomeActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
     private ImageView school;
     private FrameLayout frameLayout;
     private static final int HOME_FRAGMENT = 0;
+    private NavigationView navigationView;
     private static final int SCHOOLS_FRAGMENT = 1;
     private static final int ATTENDANCE_FRAGMENT = 2;
+    private FirebaseUser CurrentUser;
     private static final int CONTACT_US = 8;
+
     private int currentFragment = -1;
+
+
+    private CircleImageView profileView;
+    private TextView FullName, email,location;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -47,6 +74,7 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
                 this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
         drawer.addDrawerListener(toggle);
         toggle.syncState();
+        CurrentUser = FirebaseAuth.getInstance().getCurrentUser();
 
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
@@ -58,6 +86,10 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
 
         frameLayout = findViewById(R.id.main_framelayout);
         gotoFragment("OMOTEC", new HomeFragment(), HOME_FRAGMENT);
+
+        FullName = navigationView.getHeaderView(0).findViewById(R.id.userNameprofile);
+        email = navigationView.getHeaderView(0).findViewById(R.id.userEmailprofile);
+        location=navigationView.getHeaderView(0).findViewById(R.id.userLocationprofile);
     }
 
     @Override
@@ -80,9 +112,39 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
     @Override
     protected void onStart() {
         super.onStart();
-        if (schoolModelList.size() == 0) {
-            loadSchools();
+        if (DatabaseQueries.location ==null) {
+            FirebaseFirestore.getInstance().collection("USERS").document(CurrentUser.getUid()).get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+                @Override
+                public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                    if (task.isSuccessful()) {
+                        DatabaseQueries.email = task.getResult().getString("Email");
+                        DatabaseQueries.username = task.getResult().getString("Name");
+                        DatabaseQueries.location = task.getResult().getString("Location");
+
+                        FullName.setText(DatabaseQueries.username);
+                        email.setText(DatabaseQueries.email);
+                        location.setText(DatabaseQueries.location);
+                        if(schoolModelList.size() == 0) {
+                            loadSchools(location.getText().toString());
+                        }
+
+                    } else {
+                        String error = task.getException().getMessage();
+                        Toast.makeText(HomeActivity.this, error, Toast.LENGTH_SHORT).show();
+
+                    }
+                }
+            });
+        } else {
+            FullName.setText(DatabaseQueries.username);
+            email.setText(DatabaseQueries.email);
+            location.setText(DatabaseQueries.location);
+            if(schoolModelList.size() == 0) {
+                loadSchools(location.getText().toString());
+            }
+
         }
+
 
 
     }
@@ -94,7 +156,7 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
         if (id == R.id.action_notification) {
             return true;
         } else if (id == R.id.action_logout) {
-           // FirebaseAuth.getInstance().signOut();
+            // FirebaseAuth.getInstance().signOut();
             finish();
             return true;
         }
@@ -117,19 +179,16 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
 //3
         } else if (id == R.id.nav_DailyLogs) {
 //4
-        }
-        else if (id == R.id.nav_Planner) {
+        } else if (id == R.id.nav_Planner) {
 //5
 
         } else if (id == R.id.nav_School_Curriculum) {
 //6
-        }
-        else if (id == R.id.nav_AboutUs) {
+        } else if (id == R.id.nav_AboutUs) {
 //7
-        }
-        else if (id == R.id.nav_ContactUs) {
-            gotoFragment("Contact Us", new ContactUsFragment(),CONTACT_US );
-        }else if (id == R.id.nav_logOut) {
+        } else if (id == R.id.nav_ContactUs) {
+            gotoFragment("Contact Us", new ContactUsFragment(), CONTACT_US);
+        } else if (id == R.id.nav_logOut) {
             // FirebaseAuth.getInstance().signOut();
             finish();
         }

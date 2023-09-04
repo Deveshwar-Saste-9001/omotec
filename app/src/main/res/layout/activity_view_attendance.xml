@@ -22,10 +22,12 @@
             />
     </com.google.android.material.appbar.AppBarLayout>
 
+
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/dateRecyclerView"
         android:layout_width="0dp"
         android:layout_height="0dp"
+        android:layout_marginTop="10dp"
         android:background="@color/recyclerViewBackground"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"

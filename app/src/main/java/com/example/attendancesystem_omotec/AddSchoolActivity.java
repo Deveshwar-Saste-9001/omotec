@@ -54,7 +54,7 @@ public class AddSchoolActivity extends AppCompatActivity {
     private Dialog loadingDialog;
 
     private String schoollocation;
-    private String Locations[] = {"pune"};
+    private String Locations[] = {"pune","mumbai","delhi"};
     private Button addSchoolBtn;
     private DatabaseReference RootRef;
     private Spinner schoolLocationSelector;
@@ -137,7 +137,7 @@ public class AddSchoolActivity extends AppCompatActivity {
         updatedata.put("Name", schoolname.getText().toString());
         updatedata.put("logo", "");
         updatedata.put("location", schoollocation);
-        FirebaseFirestore.getInstance().collection("Schools").document().set(updatedata).addOnCompleteListener(new OnCompleteListener<Void>() {
+        FirebaseFirestore.getInstance().collection("Schools").document(schoolname.getText().toString()).set(updatedata).addOnCompleteListener(new OnCompleteListener<Void>() {
             @Override
             public void onComplete(@NonNull Task<Void> task) {
                 if (task.isSuccessful()) {

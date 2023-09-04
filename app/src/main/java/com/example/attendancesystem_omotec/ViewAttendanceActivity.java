@@ -13,6 +13,7 @@ import android.os.Bundle;
 import android.view.MenuItem;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
+import android.widget.SearchView;
 import android.widget.Toast;
 
 import com.example.attendancesystem_omotec.Adaptors.List_View_Adaptor;
@@ -40,12 +41,14 @@ public class ViewAttendanceActivity extends AppCompatActivity {
     private SessionDateAdaptor sessionDateAdaptor;
     private RecyclerView dateRecyclerView;
 
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_view_attendance);
         school = getIntent().getStringExtra("school");
         dateRecyclerView = findViewById(R.id.dateRecyclerView);
+
         Toolbar toolbar = (Toolbar) findViewById(R.id.att_toolbar);
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
@@ -56,6 +59,9 @@ public class ViewAttendanceActivity extends AppCompatActivity {
         loadingDialog.getWindow().setBackgroundDrawable(this.getDrawable(R.color.recyclerViewBackground));
         loadingDialog.getWindow().setLayout(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
         // sessionDateModelList.add(new SessionDateModel("26-09-2023"));
+        LinearLayoutManager layoutManager = new LinearLayoutManager(this);
+        layoutManager.setOrientation(LinearLayoutManager.VERTICAL);
+        dateRecyclerView.setLayoutManager(layoutManager);
 
     }
 

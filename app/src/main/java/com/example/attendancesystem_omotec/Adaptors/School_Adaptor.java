@@ -47,14 +47,15 @@ public class School_Adaptor extends RecyclerView.Adapter<School_Adaptor.ViewHold
         String schoolName = school_List.get(position).getSchool_Name();
         String schoollogo = school_List.get(position).getSchool_Logo();
         String schoollocation = school_List.get(position).getSchool_location();
-        if (!schoollogo.equals("null")) {
+        holder.logo=schoollogo;
+        if (!schoollogo.equals("")) {
             Glide.with(holder.itemView.getContext()).load(schoollogo).apply(new RequestOptions().placeholder(R.drawable.baseline_school_24)).into(holder.school_logo);
         } else {
             Glide.with(holder.itemView.getContext()).load(R.drawable.baseline_school_24).apply(new RequestOptions().placeholder(R.drawable.baseline_school_24)).into(holder.school_logo);
         }
 
         holder.setData(schoolName,position);
-        //holder.setCategoryicon(schoollogo);
+
 
 
     }
@@ -67,6 +68,7 @@ public class School_Adaptor extends RecyclerView.Adapter<School_Adaptor.ViewHold
     public static class ViewHolder extends RecyclerView.ViewHolder {
         private TextView schoolNameTextView;
         private ImageView school_logo;
+        private String logo;
         private int index;
 
         public ViewHolder(@NonNull View itemView) {
@@ -77,7 +79,7 @@ public class School_Adaptor extends RecyclerView.Adapter<School_Adaptor.ViewHold
                 @Override
                 public void onClick(View view) {
                     Intent intent=new Intent(itemView.getContext(), MarkAttPage.class);
-                    intent.putExtra("index",index);
+                    intent.putExtra("logo",logo );
                     MarkAttPage.school= (String) schoolNameTextView.getText();
                     itemView.getContext().startActivity(intent);
                 }

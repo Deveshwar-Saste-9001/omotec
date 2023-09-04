@@ -28,6 +28,7 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
+
 import java.util.Objects;
 
 public class MainMenuActivity extends AppCompatActivity {
@@ -128,6 +129,9 @@ public class MainMenuActivity extends AppCompatActivity {
                     String UserMobile = Objects.requireNonNull(usersData).getMobile().toString();
                     String UserPassword = usersData.getPassword().toString();
                     String email = usersData.getEmail().toString();
+                    DatabaseQueries.username=usersData.getName();
+                    DatabaseQueries.email=usersData.getEmail();
+                    DatabaseQueries.location= usersData.getLocation();
                     if (UserMobile.equals(Mobile)) {
                         FirebaseAuth.getInstance().signInWithEmailAndPassword(email, Password).addOnCompleteListener(new OnCompleteListener<AuthResult>() {
                             @Override
@@ -141,8 +145,11 @@ public class MainMenuActivity extends AppCompatActivity {
 
                                     } else {
                                         loadingDialog.dismiss();
+                                        FirebaseAuth.getInstance().getUid();
                                         Intent intent = new Intent(MainMenuActivity.this, HomeActivity.class);
+
                                         startActivity(intent);
+
                                         disableCloseBtn = false;
                                         finish();
                                     }

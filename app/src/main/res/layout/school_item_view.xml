@@ -15,7 +15,7 @@
         android:layout_width="100dp"
         android:layout_height="50dp"
         android:layout_margin="2dp"
-        android:src="@drawable/gkg_logo"
+        android:src="@drawable/baseline_school_24"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />

@@ -2,16 +2,26 @@ package com.example.attendancesystem_omotec.Models;
 
 public class Users {
     private String Name, Mobile, Password, Email;
+    private String location;
 
     public Users() {
 
     }
 
-    public Users(String name, String mobile, String password, String Email) {
+    public Users(String name, String mobile, String password, String Email, String location) {
         Name = name;
         Mobile = mobile;
         Password = password;
         this.Email = Email;
+        this.location=location;
+    }
+
+    public String getLocation() {
+        return location;
+    }
+
+    public void setLocation(String location) {
+        this.location = location;
     }
 
     public String getEmail() {

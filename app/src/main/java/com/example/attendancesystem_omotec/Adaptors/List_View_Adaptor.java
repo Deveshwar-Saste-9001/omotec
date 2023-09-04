@@ -29,7 +29,7 @@ public class List_View_Adaptor extends RecyclerView.Adapter<List_View_Adaptor.Li
 
     public List_View_Adaptor(List<List_view_model> student_List, boolean isEditable) {
         this.student_List = student_List;
-        this.isEditable=isEditable;
+        this.isEditable = isEditable;
     }
 
     @NonNull
@@ -51,7 +51,7 @@ public class List_View_Adaptor extends RecyclerView.Adapter<List_View_Adaptor.Li
         int rollNo = student_List.get(position).getRoll_No();
         String stud_class = student_List.get(position).getStudent_Section();
         boolean absent = student_List.get(position).isStudent_Absent();
-        holder.setData((position), name, stud_class, absent);
+        holder.setData(rollNo, name, stud_class, absent);
 
     }
 
@@ -71,7 +71,7 @@ public class List_View_Adaptor extends RecyclerView.Adapter<List_View_Adaptor.Li
             student_name = itemView.findViewById(R.id.student_name_list_view);
             student_class = itemView.findViewById(R.id.section_list_view);
             student_absent = itemView.findViewById(R.id.student_absent_list_view);
-            if(isEditable){
+            if (isEditable) {
                 itemView.setOnClickListener(new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {
@@ -84,8 +84,8 @@ public class List_View_Adaptor extends RecyclerView.Adapter<List_View_Adaptor.Li
                         item_clicked(view, getAdapterPosition(), student_name.getText().toString(), student_class.getText().toString(), student_absent.isChecked());
                     }
                 });
-            }
 
+            }
 
 
         }

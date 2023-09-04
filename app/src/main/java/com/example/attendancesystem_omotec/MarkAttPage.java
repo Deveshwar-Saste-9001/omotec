@@ -82,6 +82,7 @@ public class MarkAttPage extends AppCompatActivity {
 
     public static FirebaseFirestore firebaseFirestore = FirebaseFirestore.getInstance();
     public static String school = "";
+    String logo="";
     private Set<String> classList = new HashSet<>();
     private String classes[];
 
@@ -117,7 +118,13 @@ public class MarkAttPage extends AppCompatActivity {
         schoolLogoName = findViewById(R.id.schoolNameATT);
         schoolLogoName.setText(school);
         student_recyclerView = findViewById(R.id.student_recyclerView);
-       // listIndex = getIntent().getIntExtra("index", 0);
+
+       logo = getIntent().getStringExtra("logo");
+        if (!logo.equals("")) {
+            Glide.with(this).load(logo).apply(new RequestOptions().placeholder(R.drawable.baseline_school_24)).into(schoolLogo);
+        } else {
+            Glide.with(this).load(R.drawable.baseline_school_24).apply(new RequestOptions().placeholder(R.drawable.baseline_school_24)).into(schoolLogo);
+        }
 
 
 
@@ -126,6 +133,7 @@ public class MarkAttPage extends AppCompatActivity {
     @Override
     protected void onStart() {
         super.onStart();
+
         day = dayOfWeek.getDisplayName(TextStyle.FULL, Locale.getDefault());
         String day1 = "";
         for (int i = 0; i < day.length(); i++) {

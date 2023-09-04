@@ -52,6 +52,7 @@ dependencies {
 
     implementation("com.github.bumptech.glide:glide:4.8.0")
     implementation("com.google.firebase:firebase-inappmessaging:20.3.5")
+    implementation("com.github.bumptech.glide:glide:5.0.0-rc01")
     annotationProcessor ("com.github.bumptech.glide:compiler:4.8.0")
     implementation("com.google.firebase:firebase-storage:20.2.1")
     implementation("com.squareup.picasso:picasso:2.71828")
@@ -64,5 +65,6 @@ dependencies {
     implementation("com.google.firebase:firebase-analytics")
     implementation(platform("com.google.firebase:firebase-bom:32.2.2"))
     implementation("com.github.rey5137:material:1.1.0")
+    implementation("io.github.pilgr:paperdb:2.7.2")
 
 }

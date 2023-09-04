@@ -50,7 +50,7 @@ public class signUpActivity extends AppCompatActivity {
     private DatabaseReference RootRef;
     private String location="";
     private String[] locations={
-            "pune","mumbai"
+            "pune","mumbai","delhi"
     };
     public static boolean disableRegCloseBtn = false;
     private Button signup, backbtn;

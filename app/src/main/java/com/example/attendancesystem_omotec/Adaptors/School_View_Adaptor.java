@@ -49,9 +49,11 @@ public class School_View_Adaptor extends RecyclerView.Adapter<School_View_Adapto
         String schoollocation = school_List.get(position).getSchool_location();
 
         holder.setData(schoolName);
-      //  holder.setCategoryicon(schoollogo);
-
-
+        if (!schoollogo.equals("")) {
+            Glide.with(holder.itemView.getContext()).load(schoollogo).apply(new RequestOptions().placeholder(R.drawable.baseline_school_24)).into(holder.school_logo);
+        } else {
+            Glide.with(holder.itemView.getContext()).load(R.drawable.baseline_school_24).apply(new RequestOptions().placeholder(R.drawable.baseline_school_24)).into(holder.school_logo);
+        }
     }
 
     @Override
@@ -66,6 +68,7 @@ public class School_View_Adaptor extends RecyclerView.Adapter<School_View_Adapto
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
             schoolNameTextView = itemView.findViewById(R.id.SchoolName);
+            //
             school_logo=itemView.findViewById(R.id.SchoolLogo);
             itemView.setOnClickListener(new View.OnClickListener() {
                 @Override
