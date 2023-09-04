@@ -11,7 +11,7 @@ android {
     defaultConfig {
         applicationId = "com.example.attendancesystem_omotec"
         minSdk = 24
-        targetSdk = 33
+        targetSdk = 31
         versionCode = 1
         versionName = "1.0"
 
@@ -47,6 +47,7 @@ dependencies {
     implementation("com.google.firebase:firebase-database:20.2.2")
     implementation("com.google.firebase:firebase-firestore:24.7.0")
     implementation("com.google.firebase:firebase-storage:20.2.1")
+    implementation("com.google.firebase:firebase-inappmessaging:20.3.3")
     testImplementation("junit:junit:4.13.2")
     implementation("com.github.smarteist:autoimageslider:1.4.0-appcompat")
     androidTestImplementation("androidx.test.ext:junit:1.1.5")
@@ -54,5 +55,6 @@ dependencies {
     implementation(platform("org.jetbrains.kotlin:kotlin-bom:1.8.0"))
     implementation("com.google.firebase:firebase-analytics")
     implementation(platform("com.google.firebase:firebase-bom:32.2.2"))
+    implementation("com.github.rey5137:material:1.1.0")
 
 }
