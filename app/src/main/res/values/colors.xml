@@ -8,7 +8,7 @@
     <color name="colorSecondary">#0038FF</color>
 
     <color name="colorAccent">#FFFFFFFF</color>
-    <color name="recyclerViewBackground">#5d5d5d</color>
+    <color name="recyclerViewBackground">#8A8A8A</color>
     <color name="red">#FF0000</color>
     <color name="green">#00FF00</color>
 </resources>

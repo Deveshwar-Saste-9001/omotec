@@ -17,7 +17,7 @@ import android.widget.ImageView;
 import com.example.attendancesystem_omotec.Fragments.ContactUsFragment;
 import com.example.attendancesystem_omotec.Fragments.HomeFragment;
 import com.example.attendancesystem_omotec.Fragments.AttendanceFragment;
-import com.example.attendancesystem_omotec.Fragments.SchoolsFragment;
+import com.example.attendancesystem_omotec.Fragments.SchoolFragment;
 import com.google.android.material.navigation.NavigationView;
 
 import java.util.Objects;
@@ -103,7 +103,7 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
         if (id == R.id.nav_Home) {
             gotoFragment("OMOTEC", new HomeFragment(), HOME_FRAGMENT);
         } else if (id == R.id.nav_Schools) {
-            gotoFragment("Schools", new SchoolsFragment(), SCHOOLS_FRAGMENT);
+            gotoFragment("Schools", new SchoolFragment(), SCHOOLS_FRAGMENT);
         } else if (id == R.id.nav_Attendance) {
             gotoFragment("Attendance", new AttendanceFragment(), ATTENDANCE_FRAGMENT);
         } else if (id == R.id.nav_Summery) {

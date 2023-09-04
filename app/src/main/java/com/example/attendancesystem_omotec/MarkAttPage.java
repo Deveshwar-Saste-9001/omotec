@@ -1,5 +1,11 @@
 package com.example.attendancesystem_omotec;
 
+import static android.provider.MediaStore.MediaColumns.DOCUMENT_ID;
+import static androidx.fragment.app.FragmentManager.TAG;
+import static java.security.AccessController.getContext;
+
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.core.view.GravityCompat;
@@ -7,43 +13,83 @@ import androidx.drawerlayout.widget.DrawerLayout;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.app.Dialog;
+import android.app.ProgressDialog;
+import android.content.Context;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
 import android.widget.Button;
 import android.widget.Spinner;
+import android.widget.TextView;
 import android.widget.Toast;
 
 
 import com.example.attendancesystem_omotec.Adaptors.List_View_Adaptor;
+import com.example.attendancesystem_omotec.Adaptors.School_Adaptor;
 import com.example.attendancesystem_omotec.Models.List_view_model;
+import com.example.attendancesystem_omotec.Models.School_Model;
+import com.example.attendancesystem_omotec.Models.Student_ViewModel;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
+import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.EventListener;
+import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.FirebaseFirestoreException;
+import com.google.firebase.firestore.QueryDocumentSnapshot;
+import com.google.firebase.firestore.QuerySnapshot;
+import com.google.firebase.firestore.Source;
 
+import java.time.DayOfWeek;
+import java.time.LocalDate;
+import java.time.format.TextStyle;
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Locale;
 import java.util.Objects;
+import java.util.Set;
 
 public class MarkAttPage extends AppCompatActivity {
-    private String classes[] = {
-            "4A",
-            "4B",
-            "4C",
-            "4D",
-            "4E",
-            "4F",
-            "5A",
-            "5B"
-    };
+
+    private TextView schoolLogoName;
+    private DatabaseReference RootRef;
+
+    public static FirebaseFirestore firebaseFirestore = FirebaseFirestore.getInstance();
+    public static String school = "";
+    private Set<String> classList = new HashSet<>();
+    private String classes[];
+
     private ArrayAdapter<String> arrayAdapter;
-    private List<List_view_model> student_list = new ArrayList<>();
+    private List<List_view_model> student_list;
     private List_View_Adaptor student_adaptor;
     private RecyclerView student_recyclerView;
     private Button submit_btn;
+    private ProgressDialog LodingBar;
+    String day;
 
 
     private Spinner autoCompleteTextView;
+    static LocalDate today = LocalDate.now();
+
+    DayOfWeek dayOfWeek = today.getDayOfWeek();
+
+    public MarkAttPage() {
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -52,64 +98,26 @@ public class MarkAttPage extends AppCompatActivity {
         autoCompleteTextView = findViewById(R.id.autoCompleteTextView);
         Toolbar toolbar = (Toolbar) findViewById(R.id.att_toolbar);
         setSupportActionBar(toolbar);
+        student_list = new ArrayList<>();
+
+        LodingBar = new ProgressDialog(this);
+
+        schoolLogoName = findViewById(R.id.schoolNameATT);
+        schoolLogoName.setText(school);
 
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         student_recyclerView = findViewById(R.id.student_recyclerView);
         submit_btn = findViewById(R.id.submit_att_btn);
-        submit_btn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Toast.makeText(MarkAttPage.this, student_list.get(0).isStudent_Absent() + "", Toast.LENGTH_LONG).show();
-            }
-        });
 
 
-        ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(this, R.array.languages, android.R.layout.simple_spinner_item);
-        adapter.setDropDownViewResource(android.R.layout.simple_spinner_item);
-        autoCompleteTextView.setAdapter(adapter);
+    }
 
-        student_list.add(new List_view_model(1, "deveshwar Saste", "9D", false));
-        student_list.add(new List_view_model(2, "sakshee gandge", "5D", false));
-        student_list.add(new List_view_model(3, "Darshana Sonwane", "9D", false));
-        student_list.add(new List_view_model(4, "Jitesh", "7D", true));
-        student_list.add(new List_view_model(5, "Kunal Badgujar", "4A", false));
-        student_list.add(new List_view_model(6, "Basavaraj", "8D", false));
-        student_list.add(new List_view_model(7, "Swarnima", "3D", true));
-        student_list.add(new List_view_model(8, "Trupti Muley", "9D", false));
-        student_list.add(new List_view_model(9, "Sharayu Vanjari", "3D", false));
-        student_list.add(new List_view_model(1, "deveshwar Saste", "9D", false));
-        student_list.add(new List_view_model(2, "sakshee gandge", "5D", false));
-        student_list.add(new List_view_model(3, "Darshana Sonwane", "9D", false));
-        student_list.add(new List_view_model(4, "Jitesh", "7D", true));
-        student_list.add(new List_view_model(5, "Kunal Badgujar", "4A", false));
-        student_list.add(new List_view_model(6, "Basavaraj", "8D", false));
-        student_list.add(new List_view_model(7, "Swarnima", "3D", true));
-        student_list.add(new List_view_model(8, "Trupti Muley", "9D", false));
-        student_list.add(new List_view_model(9, "Sharayu Vanjari", "3D", false));
-        student_list.add(new List_view_model(1, "deveshwar Saste", "9D", false));
-        student_list.add(new List_view_model(2, "sakshee gandge", "5D", false));
-        student_list.add(new List_view_model(3, "Darshana Sonwane", "9D", false));
-        student_list.add(new List_view_model(4, "Jitesh", "7D", true));
-        student_list.add(new List_view_model(5, "Kunal Badgujar", "4A", false));
-        student_list.add(new List_view_model(6, "Basavaraj", "8D", false));
-        student_list.add(new List_view_model(7, "Swarnima", "3D", true));
-        student_list.add(new List_view_model(8, "Trupti Muley", "9D", false));
-        student_list.add(new List_view_model(9, "Sharayu Vanjari", "3D", false));
-        student_list.add(new List_view_model(1, "deveshwar Saste", "9D", false));
-        student_list.add(new List_view_model(2, "sakshee gandge", "5D", false));
-        student_list.add(new List_view_model(3, "Darshana Sonwane", "9D", false));
-        student_list.add(new List_view_model(4, "Jitesh", "7D", true));
-        student_list.add(new List_view_model(5, "Kunal Badgujar", "4A", false));
-        student_list.add(new List_view_model(6, "Basavaraj", "8D", false));
-        student_list.add(new List_view_model(7, "Swarnima", "3D", true));
-        student_list.add(new List_view_model(8, "Trupti Muley", "9D", false));
-        student_list.add(new List_view_model(9, "Sharayu Vanjari", "3D", false));
+    @Override
+    protected void onStart() {
+        super.onStart();
+        day = dayOfWeek.getDisplayName(TextStyle.FULL, Locale.getDefault());
 
-
-        student_adaptor = new List_View_Adaptor(student_list);
-        student_recyclerView.setAdapter(student_adaptor);
-        student_recyclerView.setLayoutManager(new LinearLayoutManager(MarkAttPage.this));
-
+        RootRef = FirebaseDatabase.getInstance().getReference();
         autoCompleteTextView.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
@@ -121,6 +129,113 @@ public class MarkAttPage extends AppCompatActivity {
 
             }
         });
+        RootRef.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                //Toast.makeText(MarkAttPage.this, "document is Loaded ", Toast.LENGTH_SHORT).show();
+                loadStudents(!dataSnapshot.child("Schools").child(school).child(today.toString()).exists());
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+
+            }
+
+
+        });
+
+
+    }
+
+    private void loadStudents(boolean isLoaded) {
+        RootRef = FirebaseDatabase.getInstance().getReference();
+        LodingBar.setTitle("Student List");
+        LodingBar.setMessage("please wait,While we are loading Students Data");
+        LodingBar.setCanceledOnTouchOutside(false);
+        LodingBar.show();
+        if (student_list.size() == 0) {
+            firebaseFirestore.collection("Schools").document(school).collection("CLASSES").document("4A").collection("STUDENTS").get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                @Override
+                public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                    if (task.isSuccessful()) {
+
+
+                        //DocumentReference docRef =firebaseFirestore.collection("Schools").document(school).collection("ATTENDANCES").document(today.toString());
+
+                        for (QueryDocumentSnapshot documentSnapshot : task.getResult()) {
+
+
+                            if (isLoaded) {
+                                final HashMap<String, Object> userdataMap = new HashMap<>();
+                                userdataMap.put("name", documentSnapshot.get("name").toString());
+                                userdataMap.put("roll_no", Integer.parseInt(documentSnapshot.get("roll_no").toString()));
+                                userdataMap.put("section", documentSnapshot.get("section").toString());
+                                userdataMap.put("isAbsent", false);
+                                HashMap<String, Object> updates = new HashMap<String, Object>();
+                                updates.put("isLoaded", true);
+                                RootRef.child("Schools").child(school).child(today.toString()).updateChildren(updates);
+                                firebaseFirestore.collection("Schools").document(school).collection("ATTENDANCES").document(today.toString()).collection("STUDENTS").document(documentSnapshot.get("name").toString()).set(userdataMap);
+                            }
+
+
+                        }
+                        firebaseFirestore.collection("Schools").document(school).collection("ATTENDANCES").document(today.toString()).collection("STUDENTS").get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                            @Override
+                            public void onComplete(@NonNull Task<QuerySnapshot> task1) {
+                                if (task1.isSuccessful()) {
+                                    for (QueryDocumentSnapshot documentSnapshot1 : task1.getResult()) {
+                                        student_list.add(new List_view_model(Integer.parseInt(documentSnapshot1.get("roll_no").toString()), documentSnapshot1.get("name").toString(), documentSnapshot1.get("section").toString(), (Boolean) documentSnapshot1.get("isAbsent")));
+                                        classList.add(documentSnapshot1.getString("section"));
+                                    }
+                                    int i = 0;
+                                    classes = new String[classList.size()];
+                                    // iterating over the hashset
+                                    for (String ele : classList) {
+                                        classes[i++] = ele;
+                                    }
+                                    ArrayAdapter<String> adapter = new ArrayAdapter<>(MarkAttPage.this, R.layout.section_list_items, classes);
+                                    adapter.setDropDownViewResource(R.layout.section_list_items);
+                                    autoCompleteTextView.setAdapter(adapter);
+
+                                    student_adaptor = new List_View_Adaptor(student_list);
+                                    student_recyclerView.setAdapter(student_adaptor);
+                                    student_recyclerView.setLayoutManager(new LinearLayoutManager(MarkAttPage.this));
+
+                                    student_adaptor.notifyDataSetChanged();
+                                    list_filter();
+                                    LodingBar.dismiss();
+                                } else {
+                                    LodingBar.dismiss();
+                                    String error = task.getException().getMessage();
+                                    Toast.makeText(MarkAttPage.this, error, Toast.LENGTH_SHORT).show();
+                                }
+
+                            }
+                        });
+                        Toast.makeText(MarkAttPage.this, "From Database", Toast.LENGTH_SHORT).show();
+
+                    } else {
+                        LodingBar.dismiss();
+                    }
+
+
+                }
+            });
+        } else {
+            ArrayAdapter<String> adapter = new ArrayAdapter<>(MarkAttPage.this, R.layout.section_list_items, classes);
+            adapter.setDropDownViewResource(R.layout.section_list_items);
+            autoCompleteTextView.setAdapter(adapter);
+
+            student_adaptor = new List_View_Adaptor(student_list);
+            student_recyclerView.setAdapter(student_adaptor);
+            student_recyclerView.setLayoutManager(new LinearLayoutManager(MarkAttPage.this));
+
+            student_adaptor.notifyDataSetChanged();
+            list_filter();
+            Toast.makeText(MarkAttPage.this, "From Local list", Toast.LENGTH_SHORT).show();
+            LodingBar.dismiss();
+        }
+
     }
 
 
@@ -149,9 +264,7 @@ public class MarkAttPage extends AppCompatActivity {
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
+
         int id = item.getItemId();
         if (id == android.R.id.home) {
             finish();
@@ -159,6 +272,12 @@ public class MarkAttPage extends AppCompatActivity {
         }
 
         return super.onOptionsItemSelected(item);
+    }
+
+    public static void updateAttendance(boolean isAbsent, String id) {
+        final HashMap<String, Object> userdataMap = new HashMap<>();
+        userdataMap.put("isAbsent", isAbsent);
+        firebaseFirestore.collection("Schools").document(school).collection("ATTENDANCES").document(today.toString()).collection("STUDENTS").document(id).update(userdataMap);
     }
 
 }

@@ -1,10 +1,10 @@
 package com.example.attendancesystem_omotec.Fragments;
 
-
 import static com.example.attendancesystem_omotec.DatabaseQueries.loadSchools;
 import static com.example.attendancesystem_omotec.DatabaseQueries.schoolModelList;
 
 import android.app.Dialog;
+import android.app.ProgressDialog;
 import android.os.Bundle;
 
 import androidx.fragment.app.Fragment;
@@ -17,22 +17,21 @@ import android.view.ViewGroup;
 
 import com.example.attendancesystem_omotec.Adaptors.School_Adaptor;
 import com.example.attendancesystem_omotec.R;
-import com.google.firebase.firestore.FirebaseFirestore;
-
 
 /**
  * A simple {@link Fragment} subclass.
+ * Use the {@link SchoolFragment#newInstance} factory method to
+ * create an instance of this fragment.
  */
-public class AttendanceFragment extends Fragment {
-    public static FirebaseFirestore firebaseFirestore = FirebaseFirestore.getInstance();
-    School_Adaptor schoolAdaptor;
+public class SchoolFragment extends Fragment {
 
 
-    public AttendanceFragment() {
+    public SchoolFragment() {
         // Required empty public constructor
     }
-
-    RecyclerView school_RecyclerView;
+    public static School_Adaptor schoolAdaptor;
+    public static RecyclerView school_RecyclerView;
+    private ProgressDialog LodingBar;
     private Dialog loadingDialog;
 
 
@@ -40,8 +39,9 @@ public class AttendanceFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        View view = inflater.inflate(R.layout.fragment_attendance, container, false);
+        View view = inflater.inflate(R.layout.fragment_schools, container, false);
         school_RecyclerView = view.findViewById(R.id.schoolRecyclerView);
+        LodingBar = new ProgressDialog(getContext());
         loadingDialog = new Dialog(getContext());
         loadingDialog.setContentView(R.layout.loading_progress_bar);
         loadingDialog.setCancelable(false);
@@ -51,21 +51,22 @@ public class AttendanceFragment extends Fragment {
 
         return view;
 
-
     }
-
     @Override
     public void onStart() {
         super.onStart();
+
         loadingDialog.show();
         if (schoolModelList.size() == 0) {
-            loadSchools(getContext(), loadingDialog);
 
+            loadSchools(getContext(),loadingDialog);
 
             schoolAdaptor = new School_Adaptor(schoolModelList);
             school_RecyclerView.setAdapter(schoolAdaptor);
             school_RecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
             schoolAdaptor.notifyDataSetChanged();
+
+
 
         } else {
             schoolAdaptor = new School_Adaptor(schoolModelList);
@@ -76,6 +77,4 @@ public class AttendanceFragment extends Fragment {
         }
 
     }
-
-
 }
