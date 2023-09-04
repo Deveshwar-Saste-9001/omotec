@@ -25,6 +25,14 @@ public class SchoolMenuActivity extends AppCompatActivity {
         Toolbar toolbar = (Toolbar) findViewById(R.id.att_toolbar);
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        viewStudents.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent=new Intent(SchoolMenuActivity.this,ViewAllStudentsActivity.class);
+                intent.putExtra("school",school);
+                startActivity(intent);
+            }
+        });
         viewAttendance.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {

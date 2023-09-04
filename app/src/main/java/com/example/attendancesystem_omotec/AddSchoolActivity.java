@@ -37,6 +37,11 @@ import com.example.attendancesystem_omotec.Models.School_Model;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.android.material.textfield.TextInputEditText;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.FirebaseFirestore;
 
@@ -51,7 +56,9 @@ public class AddSchoolActivity extends AppCompatActivity {
     private String schoollocation;
     private String Locations[] = {"pune"};
     private Button addSchoolBtn;
+    private DatabaseReference RootRef;
     private Spinner schoolLocationSelector;
+    private boolean isSchoolAdded=false;
 
 
     @Override
@@ -70,11 +77,32 @@ public class AddSchoolActivity extends AppCompatActivity {
         Toolbar toolbar = (Toolbar) findViewById(R.id.att_toolbar);
         setSupportActionBar(toolbar);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        RootRef = FirebaseDatabase.getInstance().getReference();
+
         addSchoolBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
 
-                updatePhotoF();
+                RootRef.addListenerForSingleValueEvent(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                        //Toast.makeText(MarkAttPage.this, "document is Loaded ", Toast.LENGTH_SHORT).show();
+                       isSchoolAdded=dataSnapshot.child("Schools").child(schoolname.getText().toString().trim().toLowerCase()).exists();
+                    }
+
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError error) {
+
+                    }
+
+
+                });
+                if(!isSchoolAdded){
+                    updatePhotoF();
+                }else{
+                    Toast.makeText(AddSchoolActivity.this,"School is already in list",Toast.LENGTH_SHORT).show();
+                }
+
 
             }
         });
@@ -123,6 +151,9 @@ public class AddSchoolActivity extends AppCompatActivity {
 
                     schoolModelList.add(new School_Model(schoolname.getText().toString(), schoolname.getText().toString(), "", schoollocation));
                     Toast.makeText(AddSchoolActivity.this, "Updated successfully", Toast.LENGTH_SHORT).show();
+                    HashMap<String, Object> updates = new HashMap<String, Object>();
+                    updates.put("name",schoolname.getText().toString() );
+                    RootRef.child("Schools").child(schoolname.getText().toString()).updateChildren(updates);
                     finish();
                 } else {
                     String error = task.getException().getMessage();

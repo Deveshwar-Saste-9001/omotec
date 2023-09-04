@@ -39,7 +39,7 @@ import com.example.attendancesystem_omotec.Adaptors.List_View_Adaptor;
 import com.example.attendancesystem_omotec.Adaptors.School_Adaptor;
 import com.example.attendancesystem_omotec.Models.List_view_model;
 import com.example.attendancesystem_omotec.Models.School_Model;
-import com.example.attendancesystem_omotec.Models.Student_ViewModel;
+
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.database.DataSnapshot;

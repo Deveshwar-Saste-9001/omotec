@@ -3,12 +3,12 @@ package com.example.attendancesystem_omotec.Models;
 public class Student_ViewModel {
     private String RollNo;
     private String Name;
-    private boolean absent;
+    private String  section;
 
-    public Student_ViewModel(String rollNo, String name, boolean absent) {
+    public Student_ViewModel(String rollNo, String name, String section) {
         RollNo = rollNo;
         Name = name;
-        this.absent = absent;
+        this.section = section;
     }
 
     public String getRollNo() {
@@ -27,11 +27,11 @@ public class Student_ViewModel {
         Name = name;
     }
 
-    public boolean isAbsent() {
-        return absent;
+    public String getSection() {
+        return section;
     }
 
-    public void setAbsent(boolean absent) {
-        this.absent = absent;
+    public void setSection(String section) {
+        this.section = section;
     }
 }
