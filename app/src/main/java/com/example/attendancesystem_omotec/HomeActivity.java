@@ -1,5 +1,8 @@
 package com.example.attendancesystem_omotec;
 
+import static com.example.attendancesystem_omotec.DatabaseQueries.loadSchools;
+import static com.example.attendancesystem_omotec.DatabaseQueries.schoolModelList;
+
 import androidx.appcompat.app.ActionBarDrawerToggle;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
@@ -77,6 +80,10 @@ public class HomeActivity extends AppCompatActivity implements NavigationView.On
     @Override
     protected void onStart() {
         super.onStart();
+        if (schoolModelList.size() == 0) {
+            loadSchools();
+        }
+
 
     }
 

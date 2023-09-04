@@ -47,6 +47,13 @@ dependencies {
     implementation("com.google.firebase:firebase-database:20.2.2")
     implementation("com.google.firebase:firebase-firestore:24.7.0")
     implementation("com.google.firebase:firebase-storage:20.2.1")
+    implementation("org.apache.poi:poi:5.2.3")
+    implementation("org.apache.poi:poi-ooxml:5.2.3")
+
+    implementation("com.github.bumptech.glide:glide:4.8.0")
+    annotationProcessor ("com.github.bumptech.glide:compiler:4.8.0")
+    implementation("com.google.firebase:firebase-storage:20.2.1")
+    implementation("com.squareup.picasso:picasso:2.71828")
 
     testImplementation("junit:junit:4.13.2")
     implementation("com.github.smarteist:autoimageslider:1.4.0-appcompat")

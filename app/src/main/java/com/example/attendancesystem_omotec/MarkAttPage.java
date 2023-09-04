@@ -2,6 +2,7 @@ package com.example.attendancesystem_omotec;
 
 import static android.provider.MediaStore.MediaColumns.DOCUMENT_ID;
 import static androidx.fragment.app.FragmentManager.TAG;
+import static com.example.attendancesystem_omotec.DatabaseQueries.schoolModelList;
 import static java.security.AccessController.getContext;
 
 import androidx.annotation.NonNull;
@@ -16,6 +17,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import android.app.Dialog;
 import android.app.ProgressDialog;
 import android.content.Context;
+import android.net.Uri;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.MenuItem;
@@ -25,11 +27,14 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
 
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.request.RequestOptions;
 import com.example.attendancesystem_omotec.Adaptors.List_View_Adaptor;
 import com.example.attendancesystem_omotec.Adaptors.School_Adaptor;
 import com.example.attendancesystem_omotec.Models.List_view_model;
@@ -50,7 +55,12 @@ import com.google.firebase.firestore.FirebaseFirestoreException;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 import com.google.firebase.firestore.Source;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
+import com.squareup.picasso.Picasso;
 
+import java.io.File;
+import java.io.IOException;
 import java.time.DayOfWeek;
 import java.time.LocalDate;
 import java.time.format.TextStyle;
@@ -68,6 +78,7 @@ public class MarkAttPage extends AppCompatActivity {
 
     private TextView schoolLogoName;
     private DatabaseReference RootRef;
+    private int listIndex = -1;
 
     public static FirebaseFirestore firebaseFirestore = FirebaseFirestore.getInstance();
     public static String school = "";
@@ -81,6 +92,7 @@ public class MarkAttPage extends AppCompatActivity {
     private Button submit_btn;
     private ProgressDialog LodingBar;
     String day;
+    private ImageView schoolLogo;
 
 
     private Spinner autoCompleteTextView;
@@ -99,15 +111,15 @@ public class MarkAttPage extends AppCompatActivity {
         Toolbar toolbar = (Toolbar) findViewById(R.id.att_toolbar);
         setSupportActionBar(toolbar);
         student_list = new ArrayList<>();
-
+        schoolLogo = findViewById(R.id.schoollogo);
         LodingBar = new ProgressDialog(this);
-
         schoolLogoName = findViewById(R.id.schoolNameATT);
         schoolLogoName.setText(school);
-
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         student_recyclerView = findViewById(R.id.student_recyclerView);
         submit_btn = findViewById(R.id.submit_att_btn);
+        listIndex = getIntent().getIntExtra("index", 0);
+//
 
 
     }
@@ -116,6 +128,15 @@ public class MarkAttPage extends AppCompatActivity {
     protected void onStart() {
         super.onStart();
         day = dayOfWeek.getDisplayName(TextStyle.FULL, Locale.getDefault());
+        String day1 = "";
+        for (int i = 0; i < day.length(); i++) {
+            if (i == 0) {
+                day1 = day1 + "" + day.charAt(i);
+            } else {
+                day1 = day1 + "" + day.toLowerCase().charAt(i);
+            }
+        }
+        day = day1;
 
         RootRef = FirebaseDatabase.getInstance().getReference();
         autoCompleteTextView.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
@@ -143,8 +164,45 @@ public class MarkAttPage extends AppCompatActivity {
 
 
         });
+        String iconUrl = schoolModelList.get(listIndex).getSchool_Logo();
+        if (!iconUrl.equals("null")) {
+// FirebaseStorage instance
+            FirebaseStorage storage = FirebaseStorage.getInstance();
+
+// Create a storage reference from the Firebase Storage URL
+            StorageReference storageRef = storage.getReferenceFromUrl(iconUrl);
+
+// Create a local file to store the downloaded image
+            File localFile = new File(getFilesDir(), school+"image.jpg");
+
+            // Download the image and save it to the local file
+            storageRef.getFile(localFile).addOnSuccessListener(taskSnapshot -> {
+                // Image downloaded successfully
+                // Now load the image into the ImageView using Glide
+                loadLocalImageIntoImageView(localFile);
+            }).addOnFailureListener(exception -> {
+                // Handle any errors during the download
+                exception.printStackTrace();
+            });
+
+          //  Glide.with(MarkAttPage.this).load(iconUrl).apply(new RequestOptions().placeholder(R.drawable.baseline_school_24)).into(schoolLogo);
+        } else {
+            Glide.with(MarkAttPage.this).load(R.drawable.baseline_school_24).apply(new RequestOptions().placeholder(R.drawable.baseline_school_24)).into(schoolLogo);
+        }
 
 
+    }
+
+    private void loadLocalImageIntoImageView(File localFile) {
+        // Get the ImageView instance
+        ImageView imageView = findViewById(R.id.imageView);
+
+        // Load the image into the ImageView using Glide
+        Glide.with(this)
+                .load(localFile)
+                .apply(RequestOptions.placeholderOf(R.drawable.baseline_school_24)) // Placeholder image while loading (optional)
+                .apply(RequestOptions.errorOf(R.drawable.baseline_school_24)) // Image to display if load fails (optional)
+                .into(schoolLogo);
     }
 
     private void loadStudents(boolean isLoaded) {
@@ -154,7 +212,7 @@ public class MarkAttPage extends AppCompatActivity {
         LodingBar.setCanceledOnTouchOutside(false);
         LodingBar.show();
         if (student_list.size() == 0) {
-            firebaseFirestore.collection("Schools").document(school).collection("CLASSES").document("4A").collection("STUDENTS").get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+            firebaseFirestore.collection("Schools").document(school).collection("CLASSES").document(day).collection("STUDENTS").get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
                 @Override
                 public void onComplete(@NonNull Task<QuerySnapshot> task) {
                     if (task.isSuccessful()) {

@@ -1,5 +1,6 @@
 package com.example.attendancesystem_omotec.Fragments;
 
+
 import static com.example.attendancesystem_omotec.DatabaseQueries.loadSchools;
 import static com.example.attendancesystem_omotec.DatabaseQueries.schoolModelList;
 
@@ -15,7 +16,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import com.example.attendancesystem_omotec.Adaptors.School_Adaptor;
 import com.example.attendancesystem_omotec.R;
 
 /**
@@ -23,13 +23,21 @@ import com.example.attendancesystem_omotec.R;
  * Use the {@link SchoolFragment#newInstance} factory method to
  * create an instance of this fragment.
  */
+import com.example.attendancesystem_omotec.Adaptors.School_Adaptor;
+import com.example.attendancesystem_omotec.Adaptors.School_View_Adaptor;
+
+
+/**
+ * @noinspection ALL
+ */
 public class SchoolFragment extends Fragment {
 
 
     public SchoolFragment() {
         // Required empty public constructor
     }
-    public static School_Adaptor schoolAdaptor;
+
+    public static School_View_Adaptor schoolAdaptor;
     public static RecyclerView school_RecyclerView;
     private ProgressDialog LodingBar;
     private Dialog loadingDialog;
@@ -52,24 +60,24 @@ public class SchoolFragment extends Fragment {
         return view;
 
     }
+
     @Override
     public void onStart() {
         super.onStart();
 
         loadingDialog.show();
         if (schoolModelList.size() == 0) {
-
-            loadSchools(getContext(),loadingDialog);
-
-            schoolAdaptor = new School_Adaptor(schoolModelList);
+            loadSchools();
+            schoolAdaptor = new School_View_Adaptor(schoolModelList);
             school_RecyclerView.setAdapter(schoolAdaptor);
             school_RecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
             schoolAdaptor.notifyDataSetChanged();
-
+            loadingDialog.dismiss();
 
 
         } else {
-            schoolAdaptor = new School_Adaptor(schoolModelList);
+
+            schoolAdaptor = new School_View_Adaptor(schoolModelList);
             school_RecyclerView.setAdapter(schoolAdaptor);
             school_RecyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
             schoolAdaptor.notifyDataSetChanged();

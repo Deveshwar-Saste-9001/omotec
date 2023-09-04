@@ -1,6 +1,8 @@
 package com.example.attendancesystem_omotec.Fragments;
 
 
+import static com.example.attendancesystem_omotec.DatabaseQueries.loadSchools;
+
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -12,6 +14,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 
 import com.example.attendancesystem_omotec.Adaptors.SliderAdapter;
+import com.example.attendancesystem_omotec.DatabaseQueries;
 import com.example.attendancesystem_omotec.R;
 import com.smarteist.autoimageslider.IndicatorView.animation.type.IndicatorAnimationType;
 import com.smarteist.autoimageslider.SliderAnimations;
@@ -29,9 +32,10 @@ public class HomeFragment extends Fragment {
     public HomeFragment() {
         // Required empty public constructor
     }
+
     private RecyclerView homePageRecyclerView;
 
-    private List<Integer> sliderbannerlist=new ArrayList<>();
+    private List<Integer> sliderbannerlist = new ArrayList<>();
     private SliderAdapter sliderAdapter;
     private SliderView bannerSliderView;
 
@@ -42,8 +46,8 @@ public class HomeFragment extends Fragment {
 
         View view = inflater.inflate(R.layout.fragment_home, container, false);
 
-        homePageRecyclerView=view.findViewById(R.id.categoryRecyclerView);
-        bannerSliderView=view.findViewById(R.id.Banner_slider_slideview);
+        homePageRecyclerView = view.findViewById(R.id.categoryRecyclerView);
+        bannerSliderView = view.findViewById(R.id.Banner_slider_slideview);
 
         sliderbannerlist.add(R.mipmap.slide1);
         sliderbannerlist.add(R.mipmap.slide2);
@@ -53,12 +57,21 @@ public class HomeFragment extends Fragment {
         sliderbannerlist.add(R.mipmap.slide6);
         sliderbannerlist.add(R.mipmap.slide7);
 
-        sliderAdapter=new SliderAdapter(sliderbannerlist);
+        sliderAdapter = new SliderAdapter(sliderbannerlist);
         bannerSliderView.setSliderAdapter(sliderAdapter);
         bannerSliderView.setIndicatorAnimation(IndicatorAnimationType.WORM);
         bannerSliderView.setSliderTransformAnimation(SliderAnimations.SIMPLETRANSFORMATION);
         bannerSliderView.startAutoCycle();
 
+
         return view;
+    }
+
+    @Override
+    public void onStart() {
+        super.onStart();
+        if(DatabaseQueries.schoolModelList.size()==0){
+            loadSchools();
+        }
     }
 }

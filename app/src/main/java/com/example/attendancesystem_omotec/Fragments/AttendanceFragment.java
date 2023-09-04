@@ -24,7 +24,7 @@ import com.google.firebase.firestore.FirebaseFirestore;
  * A simple {@link Fragment} subclass.
  */
 public class AttendanceFragment extends Fragment {
-    public static FirebaseFirestore firebaseFirestore = FirebaseFirestore.getInstance();
+
     School_Adaptor schoolAdaptor;
 
 
@@ -59,7 +59,7 @@ public class AttendanceFragment extends Fragment {
         super.onStart();
         loadingDialog.show();
         if (schoolModelList.size() == 0) {
-            loadSchools(getContext(), loadingDialog);
+            loadSchools();
 
 
             schoolAdaptor = new School_Adaptor(schoolModelList);
