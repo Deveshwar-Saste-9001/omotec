@@ -6,7 +6,6 @@ import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 
-import com.example.attendancesystem_omotec.Adaptors.School_Adaptor;
 import com.example.attendancesystem_omotec.Models.School_Model;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
@@ -22,7 +21,8 @@ public class DatabaseQueries {
     public static List<School_Model> schoolModelList = new ArrayList<>();
 
 
-    public static void loadSchools(Context context, Dialog loadingDialog) {
+    public static void loadSchools() {
+        schoolModelList.clear();
 
 
         firebaseFirestore.collection("Schools").orderBy("Name").get()
@@ -33,12 +33,9 @@ public class DatabaseQueries {
                             for (QueryDocumentSnapshot documentSnapshot : task.getResult()) {
                                 schoolModelList.add(new School_Model(documentSnapshot.get("school_id").toString(), documentSnapshot.get("Name").toString(), documentSnapshot.get("logo").toString(), documentSnapshot.get("location").toString()));
                             }
-                            loadingDialog.dismiss();
+
                         } else {
                             String error = task.getException().getMessage();
-                            Toast.makeText(context, error, Toast.LENGTH_SHORT).show();
-                            loadingDialog.dismiss();
-
                         }
                     }
 

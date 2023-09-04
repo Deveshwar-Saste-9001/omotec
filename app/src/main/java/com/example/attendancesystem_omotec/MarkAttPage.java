@@ -116,6 +116,15 @@ public class MarkAttPage extends AppCompatActivity {
     protected void onStart() {
         super.onStart();
         day = dayOfWeek.getDisplayName(TextStyle.FULL, Locale.getDefault());
+        String day1="";
+        for(int i=0;i<day.length();i++){
+            if (i==0){
+                day1=day1+""+day.charAt(i);
+            }else{
+                day1=day1+""+day.toLowerCase().charAt(i);
+            }
+        }
+        day=day1;
 
         RootRef = FirebaseDatabase.getInstance().getReference();
         autoCompleteTextView.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
@@ -154,7 +163,7 @@ public class MarkAttPage extends AppCompatActivity {
         LodingBar.setCanceledOnTouchOutside(false);
         LodingBar.show();
         if (student_list.size() == 0) {
-            firebaseFirestore.collection("Schools").document(school).collection("CLASSES").document("4A").collection("STUDENTS").get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+            firebaseFirestore.collection("Schools").document(school).collection("CLASSES").document(day).collection("STUDENTS").get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
                 @Override
                 public void onComplete(@NonNull Task<QuerySnapshot> task) {
                     if (task.isSuccessful()) {

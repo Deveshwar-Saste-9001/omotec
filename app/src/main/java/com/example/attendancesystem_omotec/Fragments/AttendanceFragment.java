@@ -59,7 +59,7 @@ public class AttendanceFragment extends Fragment {
         super.onStart();
         loadingDialog.show();
         if (schoolModelList.size() == 0) {
-            loadSchools(getContext(), loadingDialog);
+            loadSchools();
 
 
             schoolAdaptor = new School_Adaptor(schoolModelList);
